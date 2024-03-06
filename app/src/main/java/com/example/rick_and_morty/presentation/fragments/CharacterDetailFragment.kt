@@ -4,21 +4,19 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
-import androidx.fragment.app.viewModels
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.homework_2_6m.R
 import com.example.homework_2_6m.databinding.FragmentCharacterDetailBinding
 import com.example.rick_and_morty.presentation.viewmodels.CharacterDetailViewModel
 import com.example.rick_and_morty.util.autoCleared
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class CharacterDetailFragment : Fragment(R.layout.fragment_character_detail) {
 
     private var binding: FragmentCharacterDetailBinding by autoCleared()
-    private val characterDetailViewModel: CharacterDetailViewModel by viewModels()
+    private val characterDetailViewModel: CharacterDetailViewModel by viewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

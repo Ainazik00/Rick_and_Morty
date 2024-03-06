@@ -1,45 +1,31 @@
 package com.example.rick_and_morty.presentation.viewmodels
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.rick_and_morty.domain.models.ResultById
+import androidx.lifecycle.liveData
 import com.example.rick_and_morty.domain.use_cases.GetCharacterByIdUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-
-@HiltViewModel
-class CharacterDetailViewModel @Inject constructor(
+class CharacterDetailViewModel(
     private val getCharacterByIdUseCase: GetCharacterByIdUseCase
 ) : ViewModel() {
 
-    private var compositeDisposable = CompositeDisposable()
-    private val _newCharacterDetail = MutableLiveData<ResultById>()
-    val newCharacterDetail: LiveData<ResultById> = _newCharacterDetail
+    private var characterId: Int? = null
 
-    fun getCharacterById(id: Int?) {
-        val disposable = id?.let { characterId ->
-            getCharacterByIdUseCase(characterId)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ character ->
-                    _newCharacterDetail.value = character
-                }, {
-                    Log.e("Tag","Не удалось получить персонажа")
-                })
-        }
-        disposable.let {
-            if (it != null) {
-                compositeDisposable.add(it)
-            }
-        }
+    fun setCharacterId(id: Int?) {
+        characterId = id
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
+    fun getCharacterById(it: Int?) {
+        characterId = it
+    }
+
+    val newCharacterDetail = liveData {
+        val result = characterId?.let { id ->
+            withContext(Dispatchers.IO) {
+                getCharacterByIdUseCase.invoke(id)
+            }
+        }
+        emit(result)
     }
 }

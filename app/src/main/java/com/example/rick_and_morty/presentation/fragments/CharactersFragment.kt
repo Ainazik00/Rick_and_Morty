@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.AbsListView
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,13 +13,12 @@ import com.example.rick_and_morty.domain.adapters.CharacterAdapter
 import com.example.rick_and_morty.presentation.viewmodels.CharactersViewModel
 import com.example.rick_and_morty.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.example.rick_and_morty.util.autoCleared
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class CharactersFragment : Fragment(R.layout.fragment_characters) {
 
     private var binding: FragmentCharactersBinding by autoCleared()
-    private val charactersViewModel: CharactersViewModel by viewModels()
+    private val charactersViewModel: CharactersViewModel by viewModel()
     private var charactersAdapter: CharacterAdapter? = null
 
     var isLoading = false

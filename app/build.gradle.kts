@@ -2,7 +2,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
     id ("kotlin-parcelize")
     kotlin("kapt")
 }
@@ -58,9 +57,8 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
 
-    //RxJava2
-    implementation ("io.reactivex.rxjava2:rxjava:2.2.19")
-    implementation ("io.reactivex.rxjava2:rxandroid:2.1.1")
+    //Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     //retrofit
     val retrofit_version= "2.9.0"
@@ -75,16 +73,15 @@ dependencies {
     implementation ("com.squareup.retrofit2:adapter-rxjava2:$retrofit_version")
 
     //lifecycle,view model & livedata
-    val lifecycle_version = "2.6.0-alpha01"
-    implementation ("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    val lifecycle_version = "2.7.0"
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
 
-    //dagger hilt
-    val daggerHiltVersion = "2.50"
-    implementation("com.google.dagger:hilt-android:$daggerHiltVersion")
-    kapt("com.google.dagger:hilt-compiler:$daggerHiltVersion")
+    //Koin
+    val koinVersion = "3.5.0"
+    implementation("io.insert-koin:koin-android:$koinVersion")
 
     //room
     val room_version = "2.4.2"

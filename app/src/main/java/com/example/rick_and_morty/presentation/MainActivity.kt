@@ -9,9 +9,6 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.homework_2_6m.R
 import com.example.homework_2_6m.databinding.ActivityMainBinding
 
-import dagger.hilt.android.AndroidEntryPoint
-
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

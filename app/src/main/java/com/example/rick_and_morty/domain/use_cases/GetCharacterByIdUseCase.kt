@@ -1,17 +1,23 @@
 package com.example.rick_and_morty.domain.use_cases
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
+import com.example.rick_and_morty.data.remote.dto.ResultDto
 import com.example.rick_and_morty.domain.models.ResultById
 import com.example.rick_and_morty.domain.repository.CharacterRepository
-import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
+import java.lang.Exception
 
-class GetCharacterByIdUseCase @Inject constructor(
+
+class GetCharacterByIdUseCase(
     private val repository: CharacterRepository
 ) {
-    operator fun invoke(id: Int): Single<ResultById> {
-        return repository.getCharacterById(id = id)
-            .map { it.toResultById() }
-            .subscribeOn(Schedulers.io())
+    fun invoke(characterDto: ResultDto): LiveData<ResultById?> = liveData {
+        try {
+            val characterResult = characterDto.toResultById()
+            emit(characterResult)
+        } catch (e: Exception) {
+            emit(null)
+        }
     }
 }
+

@@ -4,24 +4,22 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.rick_and_morty.domain.models.Character
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil.dispose
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.example.homework_2_6m.R
 import com.example.homework_2_6m.databinding.ItemRickAndMortyBinding
-
+import com.example.rick_and_morty.domain.models.Character
 
 class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHolder>() {
 
-    private var binding: ItemRickAndMortyBinding? = null
+    inner class CharacterViewHolder(val binding: ItemRickAndMortyBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
-    inner class CharacterViewHolder(itemBinding: ItemRickAndMortyBinding) :
-        RecyclerView.ViewHolder(itemBinding.root)
-
-    private val differCallback = object : DiffUtil.ItemCallback<Character>() {
+     val differCallback = object : DiffUtil.ItemCallback<Character>() {
         override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean {
             return oldItem.id == newItem.id
         }
@@ -34,41 +32,39 @@ class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHold
     val differ = AsyncListDiffer(this, differCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
-        binding = ItemRickAndMortyBinding.inflate(
+        val binding = ItemRickAndMortyBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
-        return CharacterViewHolder(requireNotNull(binding))
+        return CharacterViewHolder(binding)
     }
 
     @SuppressLint("SetTextI18n", "LogNotTimber")
     override fun onBindViewHolder(holder: CharacterViewHolder, position: Int) {
         val character = differ.currentList[position]
-        holder.itemView.apply {
-            binding?.characterName?.text = character.name
-            binding?.lastKnownLocation?.text = character.location?.name
-            binding?.firstSeenIn?.text = character.origin?.name
-            binding?.let {
-                binding?.characterImage?.let { characterImage ->
-                    characterImage.load(character.image) {
-                        crossfade(true)
-                        transformations(CircleCropTransformation())
-                    }
+        holder.binding.apply {
+            characterName.text = character.name
+            lastKnownLocation.text = character.location?.name
+            firstSeenIn.text = character.origin?.name
 
-                }
+            characterImage.load(character.image) {
+                crossfade(true)
+                transformations(CircleCropTransformation())
             }
-            binding?.characterSpeciesAndStatus?.text =
-                "${character.status} - ${character.species}"
 
-            if (character.status?.contains("Dead") == true) {
-                binding?.colorIndicator?.setImageResource(R.drawable.ic_circle_red)
-            } else if (character.status?.contains("Alive") == true) {
-                binding?.colorIndicator?.setImageResource(R.drawable.ic_circle_green)
-            } else binding?.colorIndicator?.setImageResource(R.drawable.ic_circle_grey)
+            characterSpeciesAndStatus.text = "${character.status} - ${character.species}"
 
-            setOnClickListener {
-                onItemClickListener?.let { it(character) }
+            colorIndicator.setImageResource(
+                when {
+                    character.status?.contains("Dead") == true -> R.drawable.ic_circle_red
+                    character.status?.contains("Alive") == true -> R.drawable.ic_circle_green
+                    else -> R.drawable.ic_circle_grey
+                }
+            )
+
+            root.setOnClickListener {
+                onItemClickListener?.invoke(character)
                 Log.d("TAG", "${character.id}")
             }
         }
@@ -78,15 +74,18 @@ class CharacterAdapter : RecyclerView.Adapter<CharacterAdapter.CharacterViewHold
         return differ.currentList.size
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
-
     private var onItemClickListener: ((Character) -> Unit)? = null
 
     fun setOnItemClickListener(listener: (Character) -> Unit) {
         onItemClickListener = listener
-
     }
 
+    fun submitList(list: List<Character>) {
+        differ.submitList(list)
+    }
+
+    override fun onViewRecycled(holder: CharacterViewHolder) {
+        super.onViewRecycled(holder)
+        holder.binding.characterImage.dispose()
+    }
 }
